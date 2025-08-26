@@ -9,6 +9,7 @@ import CreateProduct from "./pages/CreateProduct"
 import Profile from "./pages/Profile"
 import Login from "./pages/Login"
 import ProtectedRoute from "./components/ProtectedRoute"
+import EditProduct from "./pages/EditProduct"
 
 function App() {
   const location = useLocation()
@@ -27,6 +28,7 @@ function App() {
       <Route path="/create" element={<ProtectedRoute><CreateProduct /></ProtectedRoute>} />
       <Route path="/myList" element={<ProtectedRoute><MyList /></ProtectedRoute>} />
       <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+      <Route path="/edit/:productId" element={<ProtectedRoute><EditProduct/></ProtectedRoute>}/>
       </Routes>
     </div>
   )

@@ -79,7 +79,7 @@ try {
         <p className="text-gray-700">{productData.description}</p>
         <div className="flex gap-2 items-center">
           <img src="/images/location_logo.png" alt=""  className="w-[16px] h-5"/>
-          <p className="text-gray-700">กรุงเทพ</p>
+          <p className="text-gray-700">{productData.location}</p>
         </div>
 
         <button className="bg-black text-white px-8 py-2 text-sm rounded hover:bg-gray-800 active:bg-gray-700 transition">
@@ -105,7 +105,7 @@ try {
           <div className="mt-4 bg-gray-50 p-4 rounded-lg shadow-sm space-y-2">
             <p className="text-gray-700 font-semibold">Other:</p>
             <p className="text-sm text-gray-600 leading-relaxed">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque fugiat soluta, at repellendus cupiditate doloribus odio id repellat hic consequatur!
+              {productData.contact?.others}
             </p>
           </div>
 

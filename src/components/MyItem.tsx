@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Product } from "../type/Product";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   item: Product
@@ -8,6 +9,7 @@ type Props = {
 }
 
 const MyItem: React.FC<Props> = ({item, onDelete}) => {
+const navigate = useNavigate()
 
 const handleDeletProduct = async (productId: string) => {
   try {
@@ -56,7 +58,10 @@ return (
 
       {/* Action Buttons */}
       <div className="flex gap-2">
-        <button className="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600">
+        <button 
+          className="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+          onClick={() => navigate(`/edit/${item._id}`)}
+        >
           Edit
         </button>
         <button 
