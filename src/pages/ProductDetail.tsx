@@ -7,21 +7,47 @@ const ProductDetail = () => {
   const {productId} = useParams()
   const [productData, setProductData] = useState<Product | null>(null)
   const [selectedImage, setSelectedImage] = useState<string>()
+  const [status, setStatus] = useState<string>('')
 
   
   const getProductsByID = async () => {
-try {
-  const res = await axios.get<Product>(`http://localhost:4000/api/products/${productId}`);
+    try {
+      const res = await axios.get<Product>(`http://localhost:4000/api/products/${productId}`);
 
-  if (res.status === 200 && res.data) {
-    setProductData(res.data); 
-    setSelectedImage(res.data.imageUrl[0])
-  } else {
-    console.warn("Product not found or unexpected response:", res);
+      if (res.status === 200 && res.data) {
+        setProductData(res.data); 
+        setSelectedImage(res.data.imageUrl[0])
+        setStatus(res.data.status)
+      } else {
+        console.warn("Product not found or unexpected response:", res);
+      }
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    }
   }
-} catch (error) {
-  console.error("Error fetching product:", error);
-}
+
+  const handleReserve = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        alert("Please login first")
+        return
+      }
+      const res = await axios.patch(
+        `http://localhost:4000/api/products/${productId}/reserve`,
+        {},
+        {
+          headers:{
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        }
+      )
+      
+      setStatus(res.data.status)
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   
@@ -34,7 +60,22 @@ try {
       year:"numeric",
       month:"long",
       day:"numeric",
-    })
+  })
+
+  let buttonText = '';
+  switch (status) {
+    case 'available':
+      buttonText = 'RESERVE PRODUCT';
+      break;
+    case 'reserved':
+      buttonText = 'RESERVED';
+      break;
+    case 'completed':
+      buttonText = 'DELIVERED';
+      break;
+  }
+
+  const disabled = status !== 'available';
   
 
   return productData ? (
@@ -82,8 +123,17 @@ try {
           <p className="text-gray-700">{productData.location}</p>
         </div>
 
-        <button className="bg-black text-white px-8 py-2 text-sm rounded hover:bg-gray-800 active:bg-gray-700 transition">
-          RESERVE PRODUCT
+        <button
+          onClick={handleReserve}
+          disabled={disabled}
+          className={`px-8 py-2 text-sm rounded transition
+            ${
+              status === 'available'
+                ? 'bg-black text-white hover:bg-gray-800 active:bg-gray-700 cursor-pointer'
+                : 'bg-gray-300 text-gray-600 cursor-not-allowed opacity-70'
+            }`}
+        >
+          {buttonText}
         </button>
 
         <hr className="mt-8 sm:w-4/5 border-gray-300" />

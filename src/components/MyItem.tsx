@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import type { Product } from "../type/Product";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ type Props = {
 
 const MyItem: React.FC<Props> = ({item, onDelete}) => {
 const navigate = useNavigate()
+const [status, setStatus] = useState<string>(item.status)
 
 const handleDeletProduct = async (productId: string) => {
   try {
@@ -33,6 +34,31 @@ const handleDeletProduct = async (productId: string) => {
   }
 }
 
+const handleStatusChange = async (newStatus: string) => {
+  try {
+    const token = localStorage.getItem('token')
+      if(!token) {
+        alert("Please login first");
+        return;
+    }
+
+    const res  = await axios.patch(`http://localhost:4000/api/products/${item._id}/status`,
+      {status: newStatus},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+
+    setStatus(res.data.status)
+
+  } catch (error: any) {
+      console.error("Update status error:", error.response?.data || error.message);
+  }
+}
+
 return (
     <div className="grid grid-cols-[80px_1fr_120px_120px] gap-4 items-center border-b px-4 py-3 text-sm border-gray-200 mx-4">
       {/* Image */}
@@ -46,15 +72,30 @@ return (
       <p className="truncate">{item.name}</p>
 
       {/* Status */}
-      <p
-        className={`font-medium ${
-          item.status === 'available' ? 'text-green-600' :
-          item.status === 'reserved' ? 'text-yellow-600' :
-          'text-gray-500'
-        }`}
+      <select
+        value={status}
+        onChange={(e) => handleStatusChange(e.target.value)}
+        className={`font-medium text-sm rounded border px-2 py-1 
+          ${
+            status === 'available' ? 'text-green-600 border-green-400' :
+            status === 'reserved' ? 'text-yellow-600 border-yellow-400' :
+            'text-gray-500 border-gray-400'
+          }
+        `}
       >
-        {item.status}
-      </p>
+        <option 
+          value="available"
+          className='text-green-600 border-green-400'
+        >available</option>
+        <option 
+          value="reserved"
+          className='text-yellow-600 border-yellow-400'
+        >reserved</option>
+        <option 
+          value="completed"
+          className='text-gray-500 border-gray-400'
+        >completed</option>
+      </select>
 
       {/* Action Buttons */}
       <div className="flex gap-2">
