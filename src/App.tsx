@@ -10,6 +10,8 @@ import Profile from "./pages/Profile"
 import Login from "./pages/Login"
 import ProtectedRoute from "./components/ProtectedRoute"
 import EditProduct from "./pages/EditProduct"
+import Chat from "./pages/Chat"
+import ChatDetail from "./pages/ChatDetail"
 
 function App() {
   const location = useLocation()
@@ -29,6 +31,8 @@ function App() {
       <Route path="/myList" element={<ProtectedRoute><MyList /></ProtectedRoute>} />
       <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
       <Route path="/edit/:productId" element={<ProtectedRoute><EditProduct/></ProtectedRoute>}/>
+      <Route path="/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>}/>
+      <Route path="/chat/detail" element={<ProtectedRoute><ChatDetail/></ProtectedRoute>}/>
       </Routes>
     </div>
   )
