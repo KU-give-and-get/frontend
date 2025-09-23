@@ -1,46 +1,51 @@
 import { useState } from "react";
 import type { Product } from "../type/Product";
-import Contact from "./Contact";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const CreateProduct = () => {
   const initialProduct: Omit<Product, "_id" | "createdAt" | "donorId"> = {
-  name: "",
-  description: "",
-  category: "",
-  imageUrl: [],
-  status: "available",
-  location: "",
-  contact: {
-    phone: "",
-    instagram: "",
-    facebook: "",
-    others: ""
-  }
-  }
-  const navigate = useNavigate()
-  const [files, setFiles] = useState<File[]>([])
-  const [product, setProduct] = useState(initialProduct)
-  const [previewUrls, setPreviewUrls] = useState<string[]>([])
+    name: "",
+    description: "",
+    category: "",
+    imageUrl: [],
+    status: "available",
+    location: "",
+    contact: {
+      phone: "",
+      instagram: "",
+      facebook: "",
+      others: ""
+    }
+  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
+  const navigate = useNavigate();
+  const [files, setFiles] = useState<File[]>([]);
+  const [product, setProduct] = useState(initialProduct);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false); // 👈 state สำหรับ loading
 
-    if (name.startsWith('contact.')) {
-      const field = name.split(".")[1]
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+
+    if (name.startsWith("contact.")) {
+      const field = name.split(".")[1];
       setProduct((prev) => ({
         ...prev,
-        contact:{
+        contact: {
           ...prev.contact,
           [field]: value
         }
-      }))
+      }));
     } else {
       setProduct((prev) => ({
         ...prev,
         [name]: value
-      }))
+      }));
     }
   };
 
@@ -50,58 +55,57 @@ const CreateProduct = () => {
 
     const fileArray = Array.from(files);
 
-    setFiles(prev => [...prev, ...fileArray]);
+    setFiles((prev) => [...prev, ...fileArray]);
 
-    const urls = fileArray.map(file => URL.createObjectURL(file));
-    setPreviewUrls(prev => [...prev, ...urls]);
+    const urls = fileArray.map((file) => URL.createObjectURL(file));
+    setPreviewUrls((prev) => [...prev, ...urls]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+    setLoading(true); // 👈 เริ่มโหลด
+
     try {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem("token");
       if (!token) {
-        alert("Please login first")
-        return
+        alert("Please login first");
+        setLoading(false);
+        return;
       }
 
-      const formData = new FormData()
-      formData.append("name", product.name)
-      formData.append("description", product.description || "")
-      formData.append("category", product.category || "")
-      formData.append("status", product.status)
-      formData.append("location", product.location || "")
+      const formData = new FormData();
+      formData.append("name", product.name);
+      formData.append("description", product.description || "");
+      formData.append("category", product.category || "");
+      formData.append("status", product.status);
+      formData.append("location", product.location || "");
 
-      
-      formData.append("contact[phone]", product.contact?.phone || "")
-      formData.append("contact[instagram]", product.contact?.instagram || "")
-      formData.append("contact[facebook]", product.contact?.facebook || "")
-      formData.append("contact[others]", product.contact?.others || "")
+      formData.append("contact[phone]", product.contact?.phone || "");
+      formData.append("contact[instagram]", product.contact?.instagram || "");
+      formData.append("contact[facebook]", product.contact?.facebook || "");
+      formData.append("contact[others]", product.contact?.others || "");
 
-      
       if (files.length > 0) {
-        files.forEach(file => {
+        files.forEach((file) => {
           formData.append("images", file);
         });
       }
 
-      const res = await axios.post(
-        "http://localhost:4000/api/products",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`
-          }
+      const res = await axios.post("http://localhost:4000/api/products", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`
         }
-      )
+      });
 
-      console.log("Created product:", res.data)
+      console.log("Created product:", res.data);
 
-      setProduct(initialProduct)
-      navigate("/myList")
+      setProduct(initialProduct);
+      navigate("/myList");
     } catch (error: any) {
-      console.error("Create product error:", error.response?.data || error.message)
+      console.error("Create product error:", error.response?.data || error.message);
+    } finally {
+      setLoading(false); // 👈 จบโหลด
     }
   };
 
@@ -137,14 +141,20 @@ const CreateProduct = () => {
         {/* Category */}
         <div>
           <label className="block font-medium mb-1">Category</label>
-          <input
-            type="text"
+          <select
             name="category"
             className="w-full border border-gray-300 p-2 rounded-md"
             value={product.category}
             onChange={handleChange}
-          />
+            required
+          >
+            <option value="">-- Select Category --</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Study Materials">Study Materials</option>
+            <option value="Activity Equipment">Activity Equipment</option>
+          </select>
         </div>
+
 
         {/* Location */}
         <div>
@@ -235,7 +245,12 @@ const CreateProduct = () => {
           />
           <div className="flex flex-wrap gap-2 mt-2">
             {previewUrls.map((url, idx) => (
-              <img key={idx} src={url} alt="Preview" className="w-24 h-24 object-cover rounded-md" />
+              <img
+                key={idx}
+                src={url}
+                alt="Preview"
+                className="w-24 h-24 object-cover rounded-md"
+              />
             ))}
           </div>
         </div>
@@ -244,9 +259,14 @@ const CreateProduct = () => {
         <div className="text-center">
           <button
             type="submit"
-            className="bg-black hover:opacity-80 text-white px-6 py-2 rounded-md transition"
+            disabled={loading}
+            className={`px-6 py-2 rounded-md text-white transition ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-black hover:opacity-80"
+            }`}
           >
-            Create Product
+            {loading ? "Creating..." : "Create Product"}
           </button>
         </div>
       </form>

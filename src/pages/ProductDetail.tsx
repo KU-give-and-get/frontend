@@ -2,12 +2,14 @@ import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import type { Product } from "../type/Product"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 const ProductDetail = () => {
   const {productId} = useParams()
   const [productData, setProductData] = useState<Product | null>(null)
   const [selectedImage, setSelectedImage] = useState<string>()
   const [status, setStatus] = useState<string>('')
+  const navigate = useNavigate()
 
   
   const getProductsByID = async () => {
@@ -47,6 +49,33 @@ const ProductDetail = () => {
       setStatus(res.data.status)
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  const handleContactDonor = async (donorId: string) => {
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        alert("Please login first")
+        return
+      }
+      const res = await axios.post(
+        'http://localhost:4000/api/conversations',
+        {"memberId": donorId},
+        {
+          headers:{
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        }
+      )
+
+      if (res.data) {
+        navigate(`/chat/${res.data._id}`)
+      }
+    } catch (error) {
+      console.error("Error creating conversation:", error);
+      alert("Failed to contact donor. Please try again.");
     }
   }
 
@@ -138,28 +167,35 @@ const ProductDetail = () => {
 
         <hr className="mt-8 sm:w-4/5 border-gray-300" />
 
-        <div className="space-y-1 mt-4">
+        {/* contact section */}
+        <div className="space-y-4 mt-4">
           <h2 className="font-semibold text-lg">Contact</h2>
           <div className="flex gap-2">
-            <img src="/images/telephone_logo.png" alt="" className="w-[20px]"/>
-            <p className="text-sm text-gray-600">Tel:  <span>0656546</span></p>
+            <img src="/images/telephone_logo.png" alt="" className="w-[20px]" />
+            <p className="text-sm text-gray-600">Tel: <span>0656546</span></p>
           </div>
           <div className="flex gap-2">
-            <img src="/images/instagram_logo.png" alt="" className="w-[20px]"/>
-            <p className="text-sm text-gray-600">Instagram:  <span>@tassLL</span></p>
+            <img src="/images/instagram_logo.png" alt="" className="w-[20px]" />
+            <p className="text-sm text-gray-600">Instagram: <span>@tassLL</span></p>
           </div>
           <div className="flex gap-2">
-            <img src="/images/facebook_logo.png" alt="" className="w-[20px]"/>
+            <img src="/images/facebook_logo.png" alt="" className="w-[20px]" />
             <p className="text-sm text-gray-600">Facebook: <span>helo idk</span></p>
           </div>
-          <div className="mt-4 bg-gray-50 p-4 rounded-lg shadow-sm space-y-2">
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm space-y-2">
             <p className="text-gray-700 font-semibold">Other:</p>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {productData.contact?.others}
-            </p>
+            <p className="text-sm text-gray-600 leading-relaxed">{productData.contact?.others}</p>
           </div>
 
+          {/* ปุ่ม Contact Donor */}
+          <button
+            onClick={() => handleContactDonor(productData?.donorId!)}
+            className="block mx-auto px-6 py-2.5 text-sm sm:text-base font-medium rounded-lg transition bg-black text-white hover:bg-gray-800 active:bg-gray-700"
+          >
+            Contact Donor
+          </button>
         </div>
+
 
       </div>
     </div>

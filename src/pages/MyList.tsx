@@ -57,7 +57,7 @@ const MyList = () => {
         {/* button */}
         <Link to='/create' className="flex justify-end px-4 py-4">
           <button className="bg-black text-white px-8 py-2 text-sm rounded hover:opacity-80">
-            + Add Product
+            + SHARING
           </button>
         </Link>
       </div>

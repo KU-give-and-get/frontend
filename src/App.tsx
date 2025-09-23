@@ -12,6 +12,11 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import EditProduct from "./pages/EditProduct"
 import Chat from "./pages/Chat"
 import ChatDetail from "./pages/ChatDetail"
+import WishList from "./pages/WishList"
+import WishDetail from "./pages/WishDetail"
+import MyWishList from "./pages/MyWIshList"
+import CreateWishItem from "./pages/CreateWishItem"
+import EditWish from "./pages/EditWish"
 
 function App() {
   const location = useLocation()
@@ -28,11 +33,16 @@ function App() {
       <Route path="/market/:productId" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/create" element={<ProtectedRoute><CreateProduct /></ProtectedRoute>} />
+      <Route path="/createWishItem" element={<ProtectedRoute><CreateWishItem/></ProtectedRoute>}/>
       <Route path="/myList" element={<ProtectedRoute><MyList /></ProtectedRoute>} />
       <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
       <Route path="/edit/:productId" element={<ProtectedRoute><EditProduct/></ProtectedRoute>}/>
+      <Route path="/editWish/:wishId" element={<ProtectedRoute><EditWish/></ProtectedRoute>}/>
       <Route path="/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>}/>
-      <Route path="/chat/detail" element={<ProtectedRoute><ChatDetail/></ProtectedRoute>}/>
+      <Route path="/chat/:chatId" element={<ProtectedRoute><ChatDetail/></ProtectedRoute>}/>
+      <Route path="/wishList" element={<ProtectedRoute><WishList/></ProtectedRoute>}/>
+      <Route path="/wishList/:wishId"element={<ProtectedRoute><WishDetail/></ProtectedRoute>} />
+      <Route path="/MyWishList"element={<ProtectedRoute><MyWishList/></ProtectedRoute>} />
       </Routes>
     </div>
   )
