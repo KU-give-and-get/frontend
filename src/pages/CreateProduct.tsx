@@ -11,6 +11,7 @@ const CreateProduct = () => {
     imageUrl: [],
     status: "available",
     location: "",
+    quantity: 1, // 👈 default
     contact: {
       phone: "",
       instagram: "",
@@ -23,7 +24,7 @@ const CreateProduct = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [product, setProduct] = useState(initialProduct);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false); // 👈 state สำหรับ loading
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -44,7 +45,7 @@ const CreateProduct = () => {
     } else {
       setProduct((prev) => ({
         ...prev,
-        [name]: value
+        [name]: name === "quantity" ? Number(value) : value // 👈 แปลงเป็น number ถ้าเป็น quantity
       }));
     }
   };
@@ -54,7 +55,6 @@ const CreateProduct = () => {
     if (!files) return;
 
     const fileArray = Array.from(files);
-
     setFiles((prev) => [...prev, ...fileArray]);
 
     const urls = fileArray.map((file) => URL.createObjectURL(file));
@@ -63,7 +63,7 @@ const CreateProduct = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true); // 👈 เริ่มโหลด
+    setLoading(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -79,6 +79,7 @@ const CreateProduct = () => {
       formData.append("category", product.category || "");
       formData.append("status", product.status);
       formData.append("location", product.location || "");
+      formData.append("quantity", String(product.quantity)); // 👈 ส่ง quantity ไปด้วย
 
       formData.append("contact[phone]", product.contact?.phone || "");
       formData.append("contact[instagram]", product.contact?.instagram || "");
@@ -105,7 +106,7 @@ const CreateProduct = () => {
     } catch (error: any) {
       console.error("Create product error:", error.response?.data || error.message);
     } finally {
-      setLoading(false); // 👈 จบโหลด
+      setLoading(false);
     }
   };
 
@@ -155,6 +156,19 @@ const CreateProduct = () => {
           </select>
         </div>
 
+        {/* Quantity */}
+        <div>
+          <label className="block font-medium mb-1">Quantity</label>
+          <input
+            type="number"
+            name="quantity"
+            className="w-full border border-gray-300 p-2 rounded-md"
+            value={product.quantity}
+            onChange={handleChange}
+            min={1}
+            required
+          />
+        </div>
 
         {/* Location */}
         <div>

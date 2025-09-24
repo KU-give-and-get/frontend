@@ -140,30 +140,37 @@ const ProductDetail = () => {
       </div>
 
       {/* product detail section */}
-      <div className="flex-1 p-4 space-y-4">
-        <div>
-          <h1 className="font-bold text-2xl mb-1">{productData.name}</h1>
-          <p className="text-sm text-gray-500">{formatDateTime(productData.createdAt)}</p>
-        </div>
+        <div className="flex-1 p-4 space-y-4">
+          <div>
+            <h1 className="font-bold text-2xl mb-1">{productData.name}</h1>
+            <p className="text-sm text-gray-500">{formatDateTime(productData.createdAt)}</p>
+          </div>
 
-        <p className="text-gray-700">{productData.description}</p>
-        <div className="flex gap-2 items-center">
-          <img src="/images/location_logo.png" alt=""  className="w-[16px] h-5"/>
-          <p className="text-gray-700">{productData.location}</p>
-        </div>
+          <p className="text-gray-700">{productData.description}</p>
+          <div className="flex gap-2 items-center">
+            <img src="/images/location_logo.png" alt=""  className="w-[16px] h-5"/>
+            <p className="text-gray-700">{productData.location}</p>
+          </div>
 
-        <button
-          onClick={handleReserve}
-          disabled={disabled}
-          className={`px-8 py-2 text-sm rounded transition
+          {/* ✅ เพิ่ม quantity */}
+          <div className="flex gap-2 items-center">
+            <span className="font-semibold text-gray-800">Quantity:</span>
+            <span className="text-gray-700">{productData.quantity}</span>
+          </div>
+
+          <button
+            onClick={handleReserve}
+            disabled={disabled}
+            className={`px-8 py-2 text-sm rounded transition
             ${
               status === 'available'
-                ? 'bg-black text-white hover:bg-gray-800 active:bg-gray-700 cursor-pointer'
-                : 'bg-gray-300 text-gray-600 cursor-not-allowed opacity-70'
+              ? 'bg-black text-white hover:bg-gray-800 active:bg-gray-700 cursor-pointer'
+              : 'bg-gray-300 text-gray-600 cursor-not-allowed opacity-70'
             }`}
-        >
-          {buttonText}
-        </button>
+          >
+            {buttonText}
+          </button>
+
 
         <hr className="mt-8 sm:w-4/5 border-gray-300" />
 
