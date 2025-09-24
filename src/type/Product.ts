@@ -14,4 +14,5 @@ export type Product = {
     facebook?: string;
     others?: string;
   };
+  quantity: number; 
 };

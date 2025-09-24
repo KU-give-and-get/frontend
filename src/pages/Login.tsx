@@ -18,7 +18,7 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('') 
+    setError('')
     
     try {
       const url = currentState === 'Login'

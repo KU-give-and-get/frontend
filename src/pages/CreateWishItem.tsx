@@ -1,41 +1,34 @@
 import { useState } from "react";
-import type { Product } from "../type/Product";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const CreateProduct = () => {
-  const initialProduct: Omit<Product, "_id" | "createdAt" | "donorId"> = {
+const CreateWishItem = () => {
+  const initialWishItem = {
     name: "",
     description: "",
     category: "",
-    imageUrl: [],
-    status: "available",
+    status: "pending",
     location: "",
-    quantity: 1, // 👈 default
     contact: {
       phone: "",
       instagram: "",
       facebook: "",
       others: ""
-    }
+    },
+    quantity: 1
   };
 
   const navigate = useNavigate();
-  const [files, setFiles] = useState<File[]>([]);
-  const [product, setProduct] = useState(initialProduct);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [wishItem, setWishItem] = useState(initialWishItem);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
 
     if (name.startsWith("contact.")) {
       const field = name.split(".")[1];
-      setProduct((prev) => ({
+      setWishItem((prev) => ({
         ...prev,
         contact: {
           ...prev.contact,
@@ -43,85 +36,54 @@ const CreateProduct = () => {
         }
       }));
     } else {
-      setProduct((prev) => ({
+      setWishItem((prev) => ({
         ...prev,
-        [name]: name === "quantity" ? Number(value) : value // 👈 แปลงเป็น number ถ้าเป็น quantity
+        [name]: name === "quantity" ? Number(value) : value
       }));
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    const fileArray = Array.from(files);
-    setFiles((prev) => [...prev, ...fileArray]);
-
-    const urls = fileArray.map((file) => URL.createObjectURL(file));
-    setPreviewUrls((prev) => [...prev, ...urls]);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Please login first");
-        setLoading(false);
         return;
       }
 
-      const formData = new FormData();
-      formData.append("name", product.name);
-      formData.append("description", product.description || "");
-      formData.append("category", product.category || "");
-      formData.append("status", product.status);
-      formData.append("location", product.location || "");
-      formData.append("quantity", String(product.quantity)); // 👈 ส่ง quantity ไปด้วย
-
-      formData.append("contact[phone]", product.contact?.phone || "");
-      formData.append("contact[instagram]", product.contact?.instagram || "");
-      formData.append("contact[facebook]", product.contact?.facebook || "");
-      formData.append("contact[others]", product.contact?.others || "");
-
-      if (files.length > 0) {
-        files.forEach((file) => {
-          formData.append("images", file);
-        });
-      }
-
-      const res = await axios.post("http://localhost:4000/api/products", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`
+      const res = await axios.post(
+        "http://localhost:4000/api/wishitems",
+        wishItem,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          }
         }
-      });
+      );
 
-      console.log("Created product:", res.data);
+      console.log("Created wish item:", res.data);
 
-      setProduct(initialProduct);
-      navigate("/myList");
+      setWishItem(initialWishItem);
+      navigate("/myWishList");
     } catch (error: any) {
-      console.error("Create product error:", error.response?.data || error.message);
-    } finally {
-      setLoading(false);
+      console.error("Create wish item error:", error.response?.data || error.message);
     }
   };
 
   return (
     <div className="border-t pt-10">
-      <h2 className="text-2xl font-semibold mb-6 text-center">Create Product</h2>
+      <h2 className="text-2xl font-semibold mb-6 text-center">Create Wish Item</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Name */}
         <div>
-          <label className="block font-medium mb-1">Product Name</label>
+          <label className="block font-medium mb-1">Wish Item Name</label>
           <input
             type="text"
             name="name"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={product.name}
+            value={wishItem.name}
             onChange={handleChange}
             required
           />
@@ -134,7 +96,7 @@ const CreateProduct = () => {
             name="description"
             className="w-full border border-gray-300 p-2 rounded-md"
             rows={4}
-            value={product.description}
+            value={wishItem.description}
             onChange={handleChange}
           />
         </div>
@@ -145,7 +107,7 @@ const CreateProduct = () => {
           <select
             name="category"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={product.category}
+            value={wishItem.category}
             onChange={handleChange}
             required
           >
@@ -162,10 +124,10 @@ const CreateProduct = () => {
           <input
             type="number"
             name="quantity"
-            className="w-full border border-gray-300 p-2 rounded-md"
-            value={product.quantity}
-            onChange={handleChange}
             min={1}
+            className="w-full border border-gray-300 p-2 rounded-md"
+            value={wishItem.quantity}
+            onChange={handleChange}
             required
           />
         </div>
@@ -177,7 +139,7 @@ const CreateProduct = () => {
             type="text"
             name="location"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={product.location}
+            value={wishItem.location}
             onChange={handleChange}
           />
         </div>
@@ -189,7 +151,7 @@ const CreateProduct = () => {
             type="text"
             name="contact.phone"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={product.contact?.phone}
+            value={wishItem.contact?.phone}
             onChange={handleChange}
           />
         </div>
@@ -200,7 +162,7 @@ const CreateProduct = () => {
             type="text"
             name="contact.instagram"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={product.contact?.instagram}
+            value={wishItem.contact?.instagram}
             onChange={handleChange}
           />
         </div>
@@ -211,7 +173,7 @@ const CreateProduct = () => {
             type="text"
             name="contact.facebook"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={product.contact?.facebook}
+            value={wishItem.contact?.facebook}
             onChange={handleChange}
           />
         </div>
@@ -222,7 +184,7 @@ const CreateProduct = () => {
             type="text"
             name="contact.others"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={product.contact?.others}
+            value={wishItem.contact?.others}
             onChange={handleChange}
           />
         </div>
@@ -233,54 +195,22 @@ const CreateProduct = () => {
           <select
             name="status"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={product.status}
+            value={wishItem.status}
             onChange={handleChange}
           >
-            <option value="available">Available</option>
-            <option value="unavailable">Unavailable</option>
-            <option value="reserved">Reserved</option>
-            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="fulfilled">Fulfilled</option>
+            <option value="cancelled">Cancelled</option>
           </select>
-        </div>
-
-        {/* Image Upload */}
-        <div>
-          <label className="block font-medium mb-1">Images</label>
-          <input
-            type="file"
-            multiple
-            onChange={handleImageChange}
-            className="block w-full text-sm text-gray-500
-                       file:mr-4 file:py-2 file:px-4
-                       file:rounded-md file:border-0
-                       file:text-sm file:font-semibold
-                       file:bg-blue-50 file:text-blue-700
-                       hover:file:bg-blue-100"
-          />
-          <div className="flex flex-wrap gap-2 mt-2">
-            {previewUrls.map((url, idx) => (
-              <img
-                key={idx}
-                src={url}
-                alt="Preview"
-                className="w-24 h-24 object-cover rounded-md"
-              />
-            ))}
-          </div>
         </div>
 
         {/* Submit Button */}
         <div className="text-center">
           <button
             type="submit"
-            disabled={loading}
-            className={`px-6 py-2 rounded-md text-white transition ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-black hover:opacity-80"
-            }`}
+            className="bg-black hover:opacity-80 text-white px-6 py-2 rounded-md transition"
           >
-            {loading ? "Creating..." : "Create Product"}
+            Create Wish Item
           </button>
         </div>
       </form>
@@ -288,4 +218,4 @@ const CreateProduct = () => {
   );
 };
 
-export default CreateProduct;
+export default CreateWishItem;

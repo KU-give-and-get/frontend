@@ -20,11 +20,19 @@ const Navbar = () => {
           <hr className="w-2/4 bg-gray-700 hidden"/>
         </NavLink>
         <NavLink to='/market' className="flex flex-col items-center">
-          <p>MARKET</p>
+          <p>SHARING</p>
+          <hr className="w-2/4 bg-gray-700 hidden"/>
+        </NavLink>
+        <NavLink to='/wishList' className="flex flex-col items-center">
+          <p>WISH ITEMS</p>
           <hr className="w-2/4 bg-gray-700 hidden"/>
         </NavLink>
         <NavLink to='/myList' className="flex flex-col items-center">
-          <p>MY LIST</p>
+          <p>MY SHARING</p>
+          <hr className="w-2/4 bg-gray-700 hidden"/>
+        </NavLink>
+        <NavLink to='/myWishList' className="flex flex-col items-center">
+          <p>MY WISH LIST</p>
           <hr className="w-2/4 bg-gray-700 hidden"/>
         </NavLink>
         <NavLink to='/contact' className="flex flex-col items-center">
@@ -35,6 +43,13 @@ const Navbar = () => {
 
       {/* last section */}
       <div className="flex items-center gap-6">
+        <Link to='/chat'>
+          <img 
+            src="/images/chat_icon.png" 
+            alt=""
+            className="w-6 cursor-pointer"  
+          />
+        </Link>
         <div className="group relative">
           <img src="/images/profile_icon.png" alt="" className="w-5 cursor-pointer"/>
           {/* dropdown menu */}
