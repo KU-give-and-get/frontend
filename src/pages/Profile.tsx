@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 interface UserType {
   _id: string;
   name: string;
   email: string;
-  // เพิ่ม field อื่น ๆ ถ้ามี
+  isVerified: boolean;
+  faculty: string;
+  major: string;
+  isLoan: boolean;
+  profileImageUrl: string;
 }
 
 const Profile = () => {
@@ -47,28 +52,33 @@ const Profile = () => {
       <h2 className="text-2xl font-semibold mb-6 text-center">ข้อมูลส่วนตัว</h2>
 
       <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-        {/* รูปโปรไฟล์ (mock) */}
+        {/* รูปโปรไฟล์ */}
         <div className="flex-shrink-0">
           <img
-            src="/images/profile-placeholder.png"
+            src={user.profileImageUrl || "/images/default_profile_picture.png"}
             alt="Profile"
-            className="w-32 h-32 rounded-full object-contain border"
+            className="w-32 h-32 rounded-full object-cover border"
           />
         </div>
 
         {/* ข้อมูล */}
-        <div className="flex-1 space-y-3">
+        <div className="flex-1 space-y-2">
           <p><span className="font-medium">ชื่อ-นามสกุล:</span> {user.name}</p>
           <p><span className="font-medium">อีเมล:</span> {user.email}</p>
-          {/* ถ้ามี field อื่น ๆ เช่น phone, address ให้เพิ่มได้ */}
+          <p><span className="font-medium">ยืนยันอีเมล:</span> {user.isVerified ? "ยืนยันแล้ว" : "ยังไม่ยืนยัน"}</p>
+          <p><span className="font-medium">คณะ:</span> {user.faculty || "-"}</p>
+          <p><span className="font-medium">สาขา:</span> {user.major || "-"}</p>
+          <p><span className="font-medium">กู้ กยศ:</span> {user.isLoan ? "ใช่" : "ไม่"}</p>
         </div>
       </div>
 
       {/* ปุ่มแก้ไขโปรไฟล์ */}
       <div className="mt-6 text-center">
-        <button className="bg-black text-white px-6 py-2 rounded-md hover:opacity-80 transition">
-          แก้ไขโปรไฟล์
-        </button>
+        <Link to="/editProfile">
+          <button className="bg-black text-white px-6 py-2 rounded-md hover:opacity-80 transition">
+            แก้ไขโปรไฟล์
+          </button>
+        </Link>
       </div>
     </div>
   );
