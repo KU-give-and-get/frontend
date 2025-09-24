@@ -7,6 +7,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const [currentState, setCurrentState] = useState<string>('Login');
+  const [showVerificationMessage, setShowVerificationMessage] = useState<boolean>(false)
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [email, setEmail] = useState<string>('')
@@ -32,9 +33,17 @@ const Login = () => {
 
       const res = await axios.post(url, payload)
       console.log('Success:', res.data)
-      if (res.data.token) {
-        localStorage.setItem('token', res.data.token)
-        navigate('/')
+        
+      if (res.data.user.isVerified) {
+        if (res.data.token) {
+          // If it's a login, store the token and navigate to the home page
+          localStorage.setItem('token', res.data.token);
+        }
+        // ถ้า verified แล้ว ไปหน้าหลัก
+        navigate('/');
+      } else {
+        // ถ้ายังไม่ verified แสดงข้อความให้ตรวจสอบอีเมล
+        setShowVerificationMessage(true);
       }
     } catch (err: any) {
       if (err.response && err.response.data) {
@@ -67,8 +76,13 @@ const login = useGoogleLogin({
 
       localStorage.setItem('token', res.data.token);
       navigate('/');
-    } catch (err) {
-      console.error(err);
+    } catch (err : any) {
+      if (err.response && err.response.data) {
+        console.error(err);
+        setError(err.response.data.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
+      } else {
+        setError("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+      }
     }
   },
   onError: () => {
@@ -76,7 +90,20 @@ const login = useGoogleLogin({
   },
 });
 
-
+  if (showVerificationMessage) {
+    return (
+      <div className='flex flex-col items-center mt-30'>
+        <div className='w-full sm:max-w-96 m-auto mt-14 text-gray-800 p-8 border rounded-lg shadow-lg text-center'>
+          <h2 className='text-2xl font-semibold mb-4'>โปรดตรวจสอบอีเมลของคุณ</h2>
+          <p className='text-gray-600 mb-4'>
+            เราได้ส่งอีเมลยืนยันบัญชีไปให้คุณแล้ว<br/>
+            กรุณาตรวจสอบในกล่องจดหมายเข้า (Inbox) หรือในกล่องจดหมายขยะ (Spam)
+          </p>
+          <Link to="/" className='text-sm text-blue-500 hover:underline'>กลับสู่หน้าหลัก</Link>
+        </div>
+      </div>
+    );
+  }
 
 
 

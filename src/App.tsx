@@ -10,6 +10,7 @@ import Profile from "./pages/Profile"
 import Login from "./pages/Login"
 import ProtectedRoute from "./components/ProtectedRoute"
 import EditProduct from "./pages/EditProduct"
+import VerifyEmail from './pages/VerifyEmail';
 
 function App() {
   const location = useLocation()
@@ -20,6 +21,7 @@ function App() {
       {!hideNavbar && <Navbar/>}
       <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/verify-email/:token" element={<VerifyEmail />} />
       
       <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
       <Route path="/market" element={<ProtectedRoute><Market /></ProtectedRoute>} />
