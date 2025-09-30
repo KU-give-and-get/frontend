@@ -3,12 +3,13 @@ import axios from "axios";
 import WishItem from "../components/WishItem";
 
 interface WishItemType {
-  _id: number;
+  _id: string;
   name: string;
   category: string; 
   quantity: number;
   description: string;
   status: string;
+  imageUrl: string;
 }
 
 const categories = ["Clothing", "Study Materials", "Activity Equipment"];
@@ -115,6 +116,7 @@ const WishList = () => {
               description={item.description}
               quantity={item.quantity}
               status={item.status}
+              imageUrl={item.imageUrl}
             />
           ))}
         </div>

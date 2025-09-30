@@ -15,11 +15,15 @@ const CreateWishItem = () => {
       facebook: "",
       others: ""
     },
-    quantity: 1
+    quantity: 1,
+    imageUrl: "" 
   };
 
   const navigate = useNavigate();
   const [wishItem, setWishItem] = useState(initialWishItem);
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -43,32 +47,60 @@ const CreateWishItem = () => {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
+    setPreviewUrl(URL.createObjectURL(selectedFile));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Please login first");
+        setLoading(false);
         return;
       }
 
-      const res = await axios.post(
-        "http://localhost:4000/api/wishitems",
-        wishItem,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          }
+      const formData = new FormData();
+      formData.append("name", wishItem.name);
+      formData.append("description", wishItem.description || "");
+      formData.append("category", wishItem.category || "");
+      formData.append("status", wishItem.status);
+      formData.append("location", wishItem.location || "");
+      formData.append("quantity", String(wishItem.quantity));
+
+      formData.append("contact[phone]", wishItem.contact?.phone || "");
+      formData.append("contact[instagram]", wishItem.contact?.instagram || "");
+      formData.append("contact[facebook]", wishItem.contact?.facebook || "");
+      formData.append("contact[others]", wishItem.contact?.others || "");
+
+      if (file) {
+        formData.append("image", file); 
+      }
+
+      const res = await axios.post("http://localhost:4000/api/wishitems", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`
         }
-      );
+      });
 
       console.log("Created wish item:", res.data);
 
       setWishItem(initialWishItem);
+      setFile(null);
+      setPreviewUrl(null);
       navigate("/myWishList");
     } catch (error: any) {
       console.error("Create wish item error:", error.response?.data || error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -204,13 +236,41 @@ const CreateWishItem = () => {
           </select>
         </div>
 
+        {/* Image Upload (Single) */}
+        <div>
+          <label className="block font-medium mb-1">Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="block w-full text-sm text-gray-500
+                       file:mr-4 file:py-2 file:px-4
+                       file:rounded-md file:border-0
+                       file:text-sm file:font-semibold
+                       file:bg-blue-50 file:text-blue-700
+                       hover:file:bg-blue-100"
+          />
+          {previewUrl && (
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className="w-32 h-32 object-cover rounded-md mt-2"
+            />
+          )}
+        </div>
+
         {/* Submit Button */}
         <div className="text-center">
           <button
             type="submit"
-            className="bg-black hover:opacity-80 text-white px-6 py-2 rounded-md transition"
+            disabled={loading}
+            className={`px-6 py-2 rounded-md text-white transition ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-black hover:opacity-80"
+            }`}
           >
-            Create Wish Item
+            {loading ? "Creating..." : "Create Wish Item"}
           </button>
         </div>
       </form>

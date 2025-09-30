@@ -9,6 +9,7 @@ const ProductDetail = () => {
   const [productData, setProductData] = useState<Product | null>(null)
   const [selectedImage, setSelectedImage] = useState<string>()
   const [status, setStatus] = useState<string>('')
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
   const navigate = useNavigate()
 
   
@@ -28,7 +29,7 @@ const ProductDetail = () => {
     }
   }
 
-  const handleReserve = async () => {
+  const handleReserve = async (quantity: number) => {
     try {
       const token = localStorage.getItem('token')
       if (!token) {
@@ -140,68 +141,87 @@ const ProductDetail = () => {
       </div>
 
       {/* product detail section */}
-        <div className="flex-1 p-4 space-y-4">
-          <div>
-            <h1 className="font-bold text-2xl mb-1">{productData.name}</h1>
-            <p className="text-sm text-gray-500">{formatDateTime(productData.createdAt)}</p>
-          </div>
-
-          <p className="text-gray-700">{productData.description}</p>
-          <div className="flex gap-2 items-center">
-            <img src="/images/location_logo.png" alt=""  className="w-[16px] h-5"/>
-            <p className="text-gray-700">{productData.location}</p>
-          </div>
-
-          {/* ✅ เพิ่ม quantity */}
-          <div className="flex gap-2 items-center">
-            <span className="font-semibold text-gray-800">Quantity:</span>
-            <span className="text-gray-700">{productData.quantity}</span>
-          </div>
-
-          <button
-            onClick={handleReserve}
-            disabled={disabled}
-            className={`px-8 py-2 text-sm rounded transition
-            ${
-              status === 'available'
-              ? 'bg-black text-white hover:bg-gray-800 active:bg-gray-700 cursor-pointer'
-              : 'bg-gray-300 text-gray-600 cursor-not-allowed opacity-70'
-            }`}
-          >
-            {buttonText}
-          </button>
-
-
-        <hr className="mt-8 sm:w-4/5 border-gray-300" />
-
-        {/* contact section */}
-        <div className="space-y-4 mt-4">
-          <h2 className="font-semibold text-lg">Contact</h2>
-          <div className="flex gap-2">
-            <img src="/images/telephone_logo.png" alt="" className="w-[20px]" />
-            <p className="text-sm text-gray-600">Tel: <span>0656546</span></p>
-          </div>
-          <div className="flex gap-2">
-            <img src="/images/instagram_logo.png" alt="" className="w-[20px]" />
-            <p className="text-sm text-gray-600">Instagram: <span>@tassLL</span></p>
-          </div>
-          <div className="flex gap-2">
-            <img src="/images/facebook_logo.png" alt="" className="w-[20px]" />
-            <p className="text-sm text-gray-600">Facebook: <span>helo idk</span></p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm space-y-2">
-            <p className="text-gray-700 font-semibold">Other:</p>
-            <p className="text-sm text-gray-600 leading-relaxed">{productData.contact?.others}</p>
-          </div>
-
-          {/* ปุ่ม Contact Donor */}
-          <button
-            onClick={() => handleContactDonor(productData?.donorId!)}
-            className="block mx-auto px-6 py-2.5 text-sm sm:text-base font-medium rounded-lg transition bg-black text-white hover:bg-gray-800 active:bg-gray-700"
-          >
-            Contact Donor
-          </button>
+      <div className="flex-1 p-4 space-y-4">
+        <div>
+          <h1 className="font-bold text-2xl mb-1">{productData.name}</h1>
+          <p className="text-sm text-gray-500">{formatDateTime(productData.createdAt)}</p>
         </div>
+
+        <p className="text-gray-700">{productData.description}</p>
+        <div className="flex gap-2 items-center">
+          <img src="/images/location_logo.png" alt=""  className="w-[16px] h-5"/>
+          <p className="text-gray-700">{productData.location}</p>
+        </div>
+
+        {/* ✅ เพิ่ม quantity selector */}
+        <div className="flex gap-2 items-center">
+          <span className="font-semibold text-gray-800">Quantity:</span>
+          <span className="text-gray-700">{productData.quantity}</span>
+        </div>
+
+        <div className="flex flex-wrap gap-4 items-center mt-4">
+        {/* เลือกจำนวนที่ต้องการรับ */}
+        <div className="flex items-center gap-2">
+          <label htmlFor="selectedQuantity" className="font-medium text-gray-800">
+            ต้องการรับ:
+          </label>
+          <input
+            id="selectedQuantity"
+            type="number"
+            min={1}
+            max={productData.quantity}
+            value={selectedQuantity}
+            onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+            className="w-20 border rounded px-2 py-1 text-center focus:outline-none focus:ring-2 focus:ring-gray-400"
+          />
+        </div>
+
+        {/* ปุ่มรับสินค้า */}
+        <button
+          onClick={() => handleReserve(selectedQuantity)}
+          disabled={disabled}
+          className={`px-6 py-2 rounded-lg text-sm font-medium transition
+            ${
+              status === "available"
+                ? "bg-black text-white hover:bg-gray-800 active:bg-gray-700 cursor-pointer"
+                : "bg-gray-300 text-gray-600 cursor-not-allowed opacity-70"
+            }`}
+        >
+          {status === "available" ? `รับ ${selectedQuantity} ชิ้น` : buttonText}
+        </button>
+      </div>
+
+
+      <hr className="mt-8 sm:w-4/5 border-gray-300" />
+
+      {/* contact section */}
+      <div className="space-y-4 mt-4">
+        <h2 className="font-semibold text-lg">Contact</h2>
+        <div className="flex gap-2">
+          <img src="/images/telephone_logo.png" alt="" className="w-[20px]" />
+          <p className="text-sm text-gray-600">Tel: <span>0656546</span></p>
+        </div>
+        <div className="flex gap-2">
+          <img src="/images/instagram_logo.png" alt="" className="w-[20px]" />
+          <p className="text-sm text-gray-600">Instagram: <span>@tassLL</span></p>
+        </div>
+        <div className="flex gap-2">
+          <img src="/images/facebook_logo.png" alt="" className="w-[20px]" />
+          <p className="text-sm text-gray-600">Facebook: <span>helo idk</span></p>
+        </div>
+        <div className="bg-gray-50 p-4 rounded-lg shadow-sm space-y-2">
+          <p className="text-gray-700 font-semibold">Other:</p>
+          <p className="text-sm text-gray-600 leading-relaxed">{productData.contact?.others}</p>
+        </div>
+
+        {/* ปุ่ม Contact Donor */}
+        <button
+          onClick={() => handleContactDonor(productData?.donorId!)}
+          className="block mx-auto px-6 py-2.5 text-sm sm:text-base font-medium rounded-lg transition bg-black text-white hover:bg-gray-800 active:bg-gray-700"
+        >
+          Contact Donor
+        </button>
+      </div>
 
 
       </div>

@@ -18,6 +18,7 @@ interface WishDetailType {
   location: string;
   createdAt: string;
   contact: Contact;
+  imageUrl: string; // รูปเดียว
 }
 
 const formatDateTime = (date: string) => {
@@ -37,7 +38,9 @@ const WishDetail = () => {
   useEffect(() => {
     const fetchWishDetail = async () => {
       try {
-        const res = await axios.get(`http://localhost:4000/api/wishitems/${wishId}`);
+        const res = await axios.get(
+          `http://localhost:4000/api/wishitems/${wishId}`
+        );
         setProductData(res.data);
       } catch (err) {
         console.error("Error fetching wish detail:", err);
@@ -85,6 +88,17 @@ const WishDetail = () => {
           </p>
         </div>
 
+        {/* image */}
+        {productData.imageUrl && (
+          <div className="mb-6">
+            <img
+              src={productData.imageUrl}
+              alt={productData.name}
+              className="w-full h-72 object-cover rounded-lg shadow"
+            />
+          </div>
+        )}
+
         {/* details */}
         <div className="bg-white rounded-xl shadow-md p-6 space-y-6">
           <p className="text-gray-700 leading-relaxed">{productData.description}</p>
@@ -128,7 +142,8 @@ const WishDetail = () => {
             <div className="flex items-center gap-3">
               <img src="/images/telephone_logo.png" alt="" className="w-[20px]" />
               <p className="text-gray-700">
-                <span className="font-medium">Tel:</span> {productData.contact.phone}
+                <span className="font-medium">Tel:</span>{" "}
+                {productData.contact.phone}
               </p>
             </div>
             <div className="flex items-center gap-3">

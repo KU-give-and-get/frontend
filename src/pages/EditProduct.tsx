@@ -19,7 +19,8 @@ const EditProduct = () => {
       instagram: "",
       facebook: "",
       others: ""
-    }
+    },
+    quantity:1
   };
 
   const [product, setProduct] = useState(initialProduct);
