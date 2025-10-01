@@ -9,58 +9,58 @@ type Props = {
 }
 
 const MyItem: React.FC<Props> = ({item, onDelete}) => {
-const navigate = useNavigate()
-const [status, setStatus] = useState<string>(item.status)
+  const navigate = useNavigate()
+  const [status, setStatus] = useState<string>(item.status)
 
-const handleDeletProduct = async (productId: string) => {
-  try {
-    const token = localStorage.getItem('token')
-    if(!token) {
-      alert("Please login first");
-      return;
-    }
-
-      const res = await axios.delete(`http://localhost:4000/api/products/${productId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    console.log(res.data.message);
-
-    onDelete(productId)
-  } catch (error: any) {
-     console.error("Delete product error:", error.response?.data || error.message);
-  }
-}
-
-const handleStatusChange = async (newStatus: string) => {
-  try {
-    const token = localStorage.getItem('token')
+  const handleDeletProduct = async (productId: string) => {
+    try {
+      const token = localStorage.getItem('token')
       if(!token) {
         alert("Please login first");
         return;
-    }
-
-    const res  = await axios.patch(`http://localhost:4000/api/products/${item._id}/status`,
-      {status: newStatus},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
       }
-    )
 
-    setStatus(res.data.status)
+      const res = await axios.delete(`http://localhost:4000/api/products/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
-  } catch (error: any) {
-      console.error("Update status error:", error.response?.data || error.message);
+      console.log(res.data.message);
+      onDelete(productId)
+    } catch (error: any) {
+      console.error("Delete product error:", error.response?.data || error.message);
+    }
   }
-}
 
-return (
-    <div className="grid grid-cols-[80px_1fr_120px_120px] gap-4 items-center border-b px-4 py-3 text-sm border-gray-200 mx-4">
+  const handleStatusChange = async (newStatus: string) => {
+    try {
+      const token = localStorage.getItem('token')
+      if(!token) {
+        alert("Please login first");
+        return;
+      }
+
+      const res  = await axios.patch(
+        `http://localhost:4000/api/products/${item._id}/status`,
+        {status: newStatus},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+
+      setStatus(res.data.status)
+
+    } catch (error: any) {
+      console.error("Update status error:", error.response?.data || error.message);
+    }
+  }
+
+  return (
+    <div className="grid grid-cols-[80px_1fr_120px_180px] gap-4 items-center border-b px-4 py-3 text-sm border-gray-200 mx-4">
       {/* Image */}
       <img
         src={item.imageUrl[0]}
@@ -83,34 +83,30 @@ return (
           }
         `}
       >
-        <option 
-          value="available"
-          className='text-green-600 border-green-400'
-        >available</option>
-        <option 
-          value="reserved"
-          className='text-yellow-600 border-yellow-400'
-        >reserved</option>
-        <option 
-          value="completed"
-          className='text-gray-500 border-gray-400'
-        >completed</option>
+        <option value="available" className='text-green-600 border-green-400'>available</option>
+        <option value="reserved" className='text-yellow-600 border-yellow-400'>reserved</option>
+        <option value="completed" className='text-gray-500 border-gray-400'>completed</option>
       </select>
 
       {/* Action Buttons */}
       <div className="flex gap-2">
         <button 
-          className="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+          className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
           onClick={() => navigate(`/edit/${item._id}`)}
         >
           Edit
         </button>
         <button 
-          className="px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
+          className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
           onClick={() => handleDeletProduct(item._id)}
-        
         >
           Delete
+        </button>
+        <button 
+          className="px-2 py-1 bg-purple-500 text-white rounded text-xs hover:bg-purple-600"
+          onClick={() => navigate(`/reservation/${item._id}`)}
+        >
+          Reservations
         </button>
       </div>
     </div>

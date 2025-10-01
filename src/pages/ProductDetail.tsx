@@ -30,28 +30,36 @@ const ProductDetail = () => {
   }
 
   const handleReserve = async (quantity: number) => {
-    try {
-      const token = localStorage.getItem('token')
-      if (!token) {
-        alert("Please login first")
-        return
-      }
-      const res = await axios.patch(
-        `http://localhost:4000/api/products/${productId}/reserve`,
-        {},
-        {
-          headers:{
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          }
-        }
-      )
-      
-      setStatus(res.data.status)
-    } catch (error) {
-      console.error(error);
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first");
+      return;
     }
+
+    const res = await axios.post(
+      "http://localhost:4000/api/reservations",
+      {
+        productId: productId,
+        requestedQuantity: quantity,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (res.data) {
+      alert("Reservation created successfully!");
+      setStatus("reserved"); // อัปเดต status ใน frontend
+    }
+  } catch (error: any) {
+    console.error("Reserve product error:", error.response?.data || error.message);
+    alert("Failed to reserve product. Please try again.");
   }
+};
 
   const handleContactDonor = async (donorId: string) => {
     try {
