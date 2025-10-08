@@ -11,6 +11,7 @@ const WishList = () => {
   const [error, setError] = useState<string | null>(null);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [searchText, setSearchText] = useState<string>('');
 
   const token = localStorage.getItem("token");
 
@@ -23,7 +24,6 @@ const WishList = () => {
             headers: { Authorization: token ? `Bearer ${token}` : "" },
           }
         );
-        // Filter out items with undefined category
         setWishlist(res.data.filter((item) => !!item.category));
       } catch (err: any) {
         setError(err.response?.data?.message || "Something went wrong");
@@ -43,14 +43,19 @@ const WishList = () => {
     );
   };
 
-  const filteredWishlist =
-    selectedCategories.length > 0
-      ? wishlist.filter(
-          (item) =>
-            item.category &&
-            selectedCategories.includes(item.category)
-        )
-      : wishlist;
+  const filteredWishlist = wishlist.filter((item) => {
+    const isCategoryMatch =
+      selectedCategories.length === 0 ||
+      (item.category && selectedCategories.includes(item.category));
+
+    const lowerCaseSearchText = searchText.toLowerCase().trim();
+    const itemName = item.name ? item.name.toLowerCase() : '';
+
+    const isSearchMatch =
+      lowerCaseSearchText.length === 0 || itemName.includes(lowerCaseSearchText);
+
+    return isCategoryMatch && isSearchMatch;
+  });
 
   if (loading) return <p>Loading wish items...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
@@ -94,6 +99,15 @@ const WishList = () => {
 
       {/* Products */}
       <div className="flex-1">
+        {/* Search Bar */}
+        <input
+          type="text"
+          placeholder="Search wish items by name..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-md mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
         <p className="text-3xl text-gray-500 font-light">
           All <span className="text-gray-700 font-medium">WISH ITEMS</span>
         </p>
@@ -105,6 +119,12 @@ const WishList = () => {
               wish={item}
             />
           ))}
+
+          {filteredWishlist.length === 0 && (
+            <p className="col-span-full text-center text-gray-500 mt-10">
+              No wish items found matching your criteria.
+            </p>
+          )}
         </div>
       </div>
     </div>
