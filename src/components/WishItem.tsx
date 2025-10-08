@@ -1,33 +1,28 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
-interface WishItemProps {
-  id: string;
-  name: string;
-  description: string;
-  quantity: number;
-  status: string;
-  imageUrl: string;
+import type {Wish} from '../type/Wish'
+type Props = {
+  wish: Wish
 }
 
-const WishItem: React.FC<WishItemProps> = ({ id, name, description, quantity, status, imageUrl }) => {
+const WishItem: React.FC<Props> = ({ wish }) => {
   return (
     <Link
-      to={`/wishList/${id}`}
+      to={`/wishList/${wish._id}`}
       className="border p-4 shadow border-gray-300 hover:shadow-md transition rounded"
     >
       {/* ✅ รูปภาพ */}
       <img
-        src={imageUrl || "/images/placeholder.png"}
-        alt={name}
+        src={wish.imageUrl || "/images/placeholder.png"}
+        alt={wish.name}
         className="w-full h-40 object-cover mb-2 rounded"
       />
 
       {/* ✅ ชื่อ */}
-      <h2 className="font-bold text-lg truncate">{name}</h2>
+      <h2 className="font-bold text-lg truncate">{wish.name}</h2>
 
       {/* ✅ Quantity */}
-      <p className="text-sm text-gray-600 mt-1">Quantity: {quantity}</p>
+      <p className="text-sm text-gray-600 mt-1">Quantity: {wish.quantity}</p>
 
       {/* ✅ Status badge */}
       <p className="text-xs text-gray-500 mt-2">

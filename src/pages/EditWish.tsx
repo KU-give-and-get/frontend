@@ -1,23 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-
-type Wish = {
-  _id: string;
-  name: string;
-  description: string;
-  category: string;
-  status: string;
-  location: string;
-  quantity: number;
-  contact: {
-    phone: string;
-    instagram: string;
-    facebook: string;
-    others: string;
-  };
-  imageUrl: string; // เพิ่ม imageUrl
-};
+import type { Wish } from "../type/Wish";
 
 const EditWish = () => {
   const { wishId } = useParams<{ wishId: string }>();
@@ -36,7 +20,9 @@ const EditWish = () => {
       facebook: "",
       others: "",
     },
-    imageUrl: "", // เพิ่มค่าเริ่มต้น
+    imageUrl: "",
+    donorId: "", // เพิ่มค่าเริ่มต้น
+    createdAt: new Date().toISOString(), // เพิ่มค่าเริ่มต้น
   };
 
   const [wish, setWish] = useState(initialWish);
@@ -104,10 +90,10 @@ const EditWish = () => {
       formData.append("location", wish.location || "");
       formData.append("quantity", String(wish.quantity));
 
-      formData.append("contact[phone]", wish.contact.phone || "");
-      formData.append("contact[instagram]", wish.contact.instagram || "");
-      formData.append("contact[facebook]", wish.contact.facebook || "");
-      formData.append("contact[others]", wish.contact.others || "");
+      formData.append("contact[phone]", wish.contact?.phone || "");
+      formData.append("contact[instagram]", wish.contact?.instagram || "");
+      formData.append("contact[facebook]", wish.contact?.facebook || "");
+      formData.append("contact[others]", wish.contact?.others || "");
 
       if (file) {
         formData.append("image", file); // ถ้ามี file ใหม่ ให้ส่งไป
@@ -204,7 +190,7 @@ const EditWish = () => {
             type="text"
             name="contact.phone"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={wish.contact.phone}
+            value={wish.contact?.phone}
             onChange={handleChange}
           />
         </div>
@@ -214,7 +200,7 @@ const EditWish = () => {
             type="text"
             name="contact.instagram"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={wish.contact.instagram}
+            value={wish.contact?.instagram}
             onChange={handleChange}
           />
         </div>
@@ -224,7 +210,7 @@ const EditWish = () => {
             type="text"
             name="contact.facebook"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={wish.contact.facebook}
+            value={wish.contact?.facebook}
             onChange={handleChange}
           />
         </div>
@@ -234,7 +220,7 @@ const EditWish = () => {
             type="text"
             name="contact.others"
             className="w-full border border-gray-300 p-2 rounded-md"
-            value={wish.contact.others}
+            value={wish.contact?.others}
             onChange={handleChange}
           />
         </div>

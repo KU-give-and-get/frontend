@@ -43,6 +43,14 @@ const Navbar = () => {
 
       {/* last section */}
       <div className="flex items-center gap-6">
+        <Link to='/received'>
+          <img
+            src="/images/received_items_icon.png"
+            alt=""
+            className="w-6 cursor-pointer"
+          />
+        </Link>
+
         <Link to='/chat'>
           <img 
             src="/images/chat_icon.png" 
@@ -50,6 +58,7 @@ const Navbar = () => {
             className="w-6 cursor-pointer"  
           />
         </Link>
+
         <div className="group relative">
           <img src="/images/profile_icon.png" alt="" className="w-5 cursor-pointer"/>
           {/* dropdown menu */}

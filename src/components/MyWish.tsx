@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-type Wish = {
-  _id: string;
-  name: string;
-  description: string;
-  status: string;
-  createdAt: string;
-  quantity: number;
-};
+import type {Wish} from '../type/Wish'
 
 type Props = {
   wish: Wish;

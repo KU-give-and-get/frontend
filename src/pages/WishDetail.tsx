@@ -1,25 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
-interface Contact {
-  phone: string;
-  instagram: string;
-  facebook: string;
-  others: string;
-}
-
-interface WishDetailType {
-  id: string;
-  name: string;
-  description: string;
-  quantity: number;
-  status: string;
-  location: string;
-  createdAt: string;
-  contact: Contact;
-  imageUrl: string; // รูปเดียว
-}
+import type { Wish } from "../type/Wish";
 
 const formatDateTime = (date: string) => {
   const options: Intl.DateTimeFormatOptions = {
@@ -32,7 +14,7 @@ const formatDateTime = (date: string) => {
 
 const WishDetail = () => {
   const { wishId } = useParams<{ wishId: string }>();
-  const [productData, setProductData] = useState<WishDetailType | null>(null);
+  const [productData, setProductData] = useState<Wish | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -143,27 +125,27 @@ const WishDetail = () => {
               <img src="/images/telephone_logo.png" alt="" className="w-[20px]" />
               <p className="text-gray-700">
                 <span className="font-medium">Tel:</span>{" "}
-                {productData.contact.phone}
+                {productData.contact?.phone}
               </p>
             </div>
             <div className="flex items-center gap-3">
               <img src="/images/instagram_logo.png" alt="" className="w-[20px]" />
               <p className="text-gray-700">
                 <span className="font-medium">Instagram:</span>{" "}
-                {productData.contact.instagram}
+                {productData.contact?.instagram}
               </p>
             </div>
             <div className="flex items-center gap-3">
               <img src="/images/facebook_logo.png" alt="" className="w-[20px]" />
               <p className="text-gray-700">
                 <span className="font-medium">Facebook:</span>{" "}
-                {productData.contact.facebook}
+                {productData.contact?.facebook}
               </p>
             </div>
             <div className="border-t border-gray-200 pt-4">
               <p className="text-gray-800 font-medium mb-1">Other:</p>
               <p className="text-sm text-gray-600 leading-relaxed">
-                {productData.contact.others}
+                {productData.contact?.others}
               </p>
             </div>
           </div>

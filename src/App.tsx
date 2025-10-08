@@ -20,6 +20,8 @@ import CreateWishItem from "./pages/CreateWishItem"
 import EditWish from "./pages/EditWish"
 import EditProfile from "./pages/EditProfile"
 import Reservation from "./pages/Reservation"
+import ReceivedItems from "./pages/ReceivedItems"
+import ReceiverDetail from "./pages/ReceiverDetail"
 
 function App() {
   const location = useLocation()
@@ -49,6 +51,8 @@ function App() {
       <Route path="/MyWishList"element={<ProtectedRoute><MyWishList/></ProtectedRoute>} />
       <Route path="/editProfile" element={<ProtectedRoute><EditProfile/></ProtectedRoute>}/>
       <Route path="/reservation/:productId" element={<ProtectedRoute><Reservation/></ProtectedRoute>}/>
+      <Route path="/received" element={<ProtectedRoute><ReceivedItems/></ProtectedRoute>}/>
+      <Route path="/receiver/:receiverId" element={<ProtectedRoute><ReceiverDetail/></ProtectedRoute>}/>
       </Routes>
     </div>
   )

@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import type {User} from '../type/User'
 
-interface UserType {
-  _id: string;
-  name: string;
-  email: string;
-  faculty: string;
-  major: string;
-  isLoan: boolean;
-  profileImageUrl: string;
-}
 
 const EditProfile = () => {
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);

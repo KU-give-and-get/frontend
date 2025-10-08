@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import WishItem from "../components/WishItem";
-
-interface WishItemType {
-  _id: string;
-  name: string;
-  category: string; 
-  quantity: number;
-  description: string;
-  status: string;
-  imageUrl: string;
-}
+import type { Wish } from "../type/Wish";
 
 const categories = ["Clothing", "Study Materials", "Activity Equipment"];
 
 const WishList = () => {
-  const [wishlist, setWishlist] = useState<WishItemType[]>([]);
+  const [wishlist, setWishlist] = useState<Wish[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showFilter, setShowFilter] = useState(false);
@@ -26,7 +17,7 @@ const WishList = () => {
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
-        const res = await axios.get<WishItemType[]>(
+        const res = await axios.get<Wish[]>(
           "http://localhost:4000/api/wishitems",
           {
             headers: { Authorization: token ? `Bearer ${token}` : "" },
@@ -111,12 +102,7 @@ const WishList = () => {
           {filteredWishlist.map((item) => (
             <WishItem
               key={item._id}
-              id={item._id}
-              name={item.name}
-              description={item.description}
-              quantity={item.quantity}
-              status={item.status}
-              imageUrl={item.imageUrl}
+              wish={item}
             />
           ))}
         </div>

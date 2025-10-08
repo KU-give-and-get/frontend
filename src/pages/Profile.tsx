@@ -1,20 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
-interface UserType {
-  _id: string;
-  name: string;
-  email: string;
-  isVerified: boolean;
-  faculty: string;
-  major: string;
-  isLoan: boolean;
-  profileImageUrl: string;
-}
+import type { User } from '../type/User';
 
 const Profile = () => {
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

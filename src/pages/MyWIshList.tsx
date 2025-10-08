@@ -2,15 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import MyWish from "../components/MyWish";
-
-type Wish = {
-  _id: string;
-  name: string;
-  description: string;
-  status: string;
-  createdAt: string;
-  quantity: number;
-};
+import type { Wish } from "../type/Wish";
 
 const MyWishList = () => {
   const [myWishes, setMyWishes] = useState<Wish[]>([]);
