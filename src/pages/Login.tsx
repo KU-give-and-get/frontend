@@ -115,6 +115,12 @@ const login = useGoogleLogin({
         onSubmit={handleSubmit}
       >
         <p className='prata-regular text-3xl'>{currentState}</p>
+        {
+          currentState === 'Forgot Password' && 
+            <p className='text-sm text-gray-500 text-left text-xs'>
+              เราจะส่งลิงก์การเปลี่ยนรหัสผ่านไปยังอีเมลของคุณ<br/>
+            </p>
+        }
 
         {/* แสดง error ถ้ามี */}
         {error && (
@@ -122,8 +128,8 @@ const login = useGoogleLogin({
             {error}
           </div>
         )}
-
-        {currentState == 'Login'? '' : (
+  
+        {currentState === 'Sign up' &&(
           <input 
             onChange={(e) => setName(e.target.value)} 
             value={name} 
@@ -141,7 +147,7 @@ const login = useGoogleLogin({
           placeholder='Email' 
           required
         />
-        <div className='relative w-full'>
+        {currentState !== 'Forgot Password' && (<div className='relative w-full'>
           <input 
             onChange={(e) => setPassword(e.target.value)} 
             value={password} 
@@ -155,17 +161,23 @@ const login = useGoogleLogin({
             alt="" 
             onClick={() => setShowPassword(!showPassword)}
             className='absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer w-12 h-12'/>
-        </div>
+        </div>)}
         <div className='w-full flex justify-between text-sm mt-[-8px]'>
-          <p className='cursor-pointer'>Forgot your password?</p>
+          {(currentState === 'Login' || currentState === 'Sign up') && (
+            <>
+              <p onClick={() => setCurrentState('Forgot Password')} className='cursor-pointer'>Forgot your password?</p>
           {
             currentState === 'Login'
             ? <p onClick={() => setCurrentState('Sign up')} className='cursor-pointer'>Create account</p>
             : <p onClick={() => setCurrentState('Login')} className='cursor-pointer'>Login Here</p>
           }
+            </>
+          )}
+          {(currentState === 'Forgot Password') && (<p onClick={() => setCurrentState('Login')} className='cursor-pointer'>Go back to login</p>)}
+
         </div>
         <button type='submit' className='bg-black text-white font-light px-8 py-2 hover:opacity-80'>
-          {currentState}
+          {currentState === 'Forgot Password' ? 'Confirm' : currentState}
         </button>
       </form>
 
