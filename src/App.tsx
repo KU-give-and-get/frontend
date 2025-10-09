@@ -22,6 +22,7 @@ import EditProfile from "./pages/EditProfile"
 import Reservation from "./pages/Reservation"
 import ReceivedItems from "./pages/ReceivedItems"
 import ReceiverDetail from "./pages/ReceiverDetail"
+import ResetPassword from "./pages/ResetPassword"
 
 function App() {
   const location = useLocation()
@@ -33,6 +34,7 @@ function App() {
       <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/verify-email/:token" element={<VerifyEmail />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       
       <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
       <Route path="/market" element={<ProtectedRoute><Market /></ProtectedRoute>} />
