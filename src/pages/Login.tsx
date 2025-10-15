@@ -14,17 +14,21 @@ const Login = () => {
   const [error, setError] = useState<string>('')
   const [showPassword, setShowPassword] = useState<boolean>(true)
   const navigate = useNavigate()
+  const [successMessage, setSuccessMessage] = useState<string>('')
 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('')
+    setSuccessMessage('')
     
     try {
-      const url = currentState === 'Login'
-        ? 'http://localhost:4000/api/auth/login'
-        : 'http://localhost:4000/api/auth/signup'
-      
+      const urls:Record<string, string> = {
+        'Login': 'http://localhost:4000/api/auth/login',
+        'Sign up': 'http://localhost:4000/api/auth/register',
+        'Forgot Password': 'http://localhost:4000/api/auth/send-reset-password-link'
+      }
+      const url = urls[currentState]
       const payload = {
         email,
         password,
@@ -33,7 +37,10 @@ const Login = () => {
 
       const res = await axios.post(url, payload)
       console.log('Success:', res.data)
-        
+      if (currentState === 'Forgot Password') {
+        setSuccessMessage('เราได้ส่งลิงก์การเปลี่ยนรหัสผ่านไปยังอีเมลของคุณแล้ว กรุณาตรวจสอบในกล่องจดหมายเข้า (Inbox) หรือในกล่องจดหมายขยะ (Spam)')
+        return;
+      }
       if (res.data.user.isVerified) {
         if (res.data.token) {
           // If it's a login, store the token and navigate to the home page
@@ -128,7 +135,11 @@ const login = useGoogleLogin({
             {error}
           </div>
         )}
-  
+        {successMessage && (
+          <div className='w-full text-green-600 text-sm border border-green-500 bg-green-50 px-3 py-2 rounded'>
+            {successMessage}
+          </div>
+        )}
         {currentState === 'Sign up' &&(
           <input 
             onChange={(e) => setName(e.target.value)} 

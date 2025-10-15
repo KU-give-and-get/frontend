@@ -26,7 +26,7 @@ import ResetPassword from "./pages/ResetPassword"
 
 function App() {
   const location = useLocation()
-  const hideNavbar = location.pathname === '/login';
+  const hideNavbar = location.pathname === '/login' || location.pathname.startsWith('/verify-email') || location.pathname.startsWith('/reset-password');
 
   return (
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:[9vw]">
@@ -34,7 +34,7 @@ function App() {
       <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/verify-email/:token" element={<VerifyEmail />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
       
       <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
       <Route path="/market" element={<ProtectedRoute><Market /></ProtectedRoute>} />
