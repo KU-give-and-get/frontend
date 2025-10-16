@@ -51,7 +51,8 @@ const ResetPassword = () => {
             onChange={(e) => setPassword(e.target.value)} 
             value={password} 
             className='w-full px-3 py-2 border border-gray-800' 
-            placeholder='Password' 
+            placeholder='Password'
+            type='password' 
             required
           />
             <input 
@@ -59,6 +60,7 @@ const ResetPassword = () => {
             value={confirmPassword} 
             className='w-full px-3 py-2 border border-gray-800' 
             placeholder='Confirm Password' 
+            type='password'
             required
           />
         <button type='submit' className='bg-black text-white font-light px-8 py-2 hover:opacity-80'>
