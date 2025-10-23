@@ -40,6 +40,8 @@ const Market = () => {
     // ✅ เช็คว่าสินค้าต้องมีจำนวนคงเหลือมากกว่า 0
     const hasQuantity = product.quantity > 0;
 
+    const hasStatusAvailable = product.status !== 'completed';
+
     const isCategoryMatch =
       selectedCategories.length === 0 ||
       selectedCategories.includes(product.category as string);
@@ -53,7 +55,7 @@ const Market = () => {
       productSearchField.includes(lowerCaseSearchText);
 
     // ✅ รวมตัวกรองทั้งหมด
-    return hasQuantity && isCategoryMatch && isSearchMatch;
+    return hasQuantity && isCategoryMatch && isSearchMatch && hasStatusAvailable;
   });
 
 
