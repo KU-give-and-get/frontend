@@ -37,19 +37,25 @@ const Market = () => {
 
   // ตัวกรองหลักที่รวม Category Filter และ Search Filter เข้าด้วยกัน
   const filteredProducts = products.filter(product => {
-    const isCategoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category as string);
+    // ✅ เช็คว่าสินค้าต้องมีจำนวนคงเหลือมากกว่า 0
+    const hasQuantity = product.quantity > 0;
 
-    // สมมติว่า Product มี property ชื่อ 'name' หรือ 'description' ที่ใช้ในการค้นหา
-    // เราจะแปลงให้เป็นตัวพิมพ์เล็กทั้งหมดเพื่อเปรียบเทียบแบบไม่สนใจตัวพิมพ์ใหญ่-เล็ก (case-insensitive)
-    const productSearchField = (product.name || product.description || '').toLowerCase(); // ใช้ .name หรือ .description ตามโครงสร้าง Product ของคุณ
+    const isCategoryMatch =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(product.category as string);
+
+    const productSearchField =
+      (product.name || product.description || '').toLowerCase();
+
     const lowerCaseSearchText = searchText.toLowerCase().trim();
+    const isSearchMatch =
+      lowerCaseSearchText.length === 0 ||
+      productSearchField.includes(lowerCaseSearchText);
 
-    // กรองสินค้าตามข้อความค้นหา (ถ้ามี)
-    const isSearchMatch = lowerCaseSearchText.length === 0 || productSearchField.includes(lowerCaseSearchText);
-
-    // คืนค่าเป็นจริงก็ต่อเมื่อตรงตามเงื่อนไขของ category *และ* search text
-    return isCategoryMatch && isSearchMatch;
+    // ✅ รวมตัวกรองทั้งหมด
+    return hasQuantity && isCategoryMatch && isSearchMatch;
   });
+
 
 
   return (
