@@ -3,6 +3,8 @@ import type { Product } from "../type/Product";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const MyList = () => {
 
     const [myProducts, setMyProducts] = useState<Product[]>([]);
@@ -61,6 +63,8 @@ const MyList = () => {
           </button>
         </Link>
       </div>
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
 
   )

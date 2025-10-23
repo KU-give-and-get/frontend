@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import MyWish from "../components/MyWish";
 import type { Wish } from "../type/Wish";
+import { ToastContainer } from "react-toastify";
 
 const MyWishList = () => {
   const [myWishes, setMyWishes] = useState<Wish[]>([]);
@@ -66,6 +67,8 @@ const MyWishList = () => {
           </button>
         </Link>
       </div>
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };

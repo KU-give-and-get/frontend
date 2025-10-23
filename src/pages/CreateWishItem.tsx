@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CreateWishItem = () => {
   const initialWishItem = {
@@ -96,8 +98,11 @@ const CreateWishItem = () => {
       setWishItem(initialWishItem);
       setFile(null);
       setPreviewUrl(null);
-      navigate("/myWishList");
+      
+      toast.success("✅ Wish item created successfully!");
+      setTimeout( () => navigate("/myWishList"), 1500);
     } catch (error: any) {
+      toast.error("❌ Failed to create item. Please try again.");
       console.error("Create wish item error:", error.response?.data || error.message);
     } finally {
       setLoading(false);
@@ -274,6 +279,8 @@ const CreateWishItem = () => {
           </button>
         </div>
       </form>
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };

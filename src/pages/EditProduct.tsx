@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import type { Product } from "../type/Product";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditProduct = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -118,10 +120,11 @@ const EditProduct = () => {
         }
       );
 
-      console.log("Updated product:", res.data);
+      toast.success("✅ Item edit successfully!");
 
-      navigate("/myList");
+      setTimeout(() => navigate("/myList"), 1500);
     } catch (error: any) {
+      toast.error("❌ Failed to edit item. Please try again.");
       console.error("Update product error:", error.response?.data || error.message);
     }
   };
@@ -286,6 +289,8 @@ const EditProduct = () => {
           </button>
         </div>
       </form>
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };

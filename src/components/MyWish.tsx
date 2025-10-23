@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import type {Wish} from '../type/Wish'
+import { toast } from "react-toastify";
 
 type Props = {
   wish: Wish;
@@ -31,11 +32,13 @@ const MyWish: React.FC<Props> = ({ wish, onDelete }) => {
 
       console.log(res.data.message);
       onDelete(wishId);
+      toast.success("Deleted Item successfully ✅");
     } catch (error: any) {
       console.error(
         "Delete wish error:",
         error.response?.data || error.message
       );
+      toast.error("Failed to delete product ❌");
     }
   };
 

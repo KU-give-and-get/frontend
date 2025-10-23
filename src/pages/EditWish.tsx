@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Wish } from "../type/Wish";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditWish = () => {
   const { wishId } = useParams<{ wishId: string }>();
@@ -111,8 +113,12 @@ const EditWish = () => {
       );
 
       console.log("Updated wish:", res.data);
-      navigate("/myWishList");
+
+      toast.success("✅ Item edit successfully!");
+      setTimeout(() =>
+      navigate("/myWishList"), 1500);
     } catch (error: any) {
+      toast.error("❌ Failed to edit item. Please try again.");
       console.error("Update wish error:", error.response?.data || error.message);
     }
   };
@@ -273,6 +279,8 @@ const EditWish = () => {
           </button>
         </div>
       </form>
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };

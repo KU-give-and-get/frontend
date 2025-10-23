@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import type { Product } from "../type/Product";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from "react-toastify";
 
 type Props = {
   item: Product
@@ -16,7 +17,7 @@ const MyItem: React.FC<Props> = ({item, onDelete}) => {
     try {
       const token = localStorage.getItem('token')
       if(!token) {
-        alert("Please login first");
+        toast.error("Please login first");
         return;
       }
 
@@ -27,11 +28,15 @@ const MyItem: React.FC<Props> = ({item, onDelete}) => {
       });
 
       console.log(res.data.message);
-      onDelete(productId)
+      onDelete(productId);
+      toast.success("Deleted Item successfully ✅");
+
     } catch (error: any) {
       console.error("Delete product error:", error.response?.data || error.message);
+      toast.error("Failed to delete product ❌");
     }
   }
+
 
   const handleStatusChange = async (newStatus: string) => {
     try {

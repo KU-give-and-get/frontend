@@ -2,6 +2,8 @@ import { useState } from "react";
 import type { Product } from "../type/Product";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CreateProduct = () => {
   const initialProduct: Omit<Product, "_id" | "createdAt" | "donorId"> = {
@@ -68,7 +70,7 @@ const CreateProduct = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("Please login first");
+        toast.error("Please login first");
         setLoading(false);
         return;
       }
@@ -79,7 +81,7 @@ const CreateProduct = () => {
       formData.append("category", product.category || "");
       formData.append("status", product.status);
       formData.append("location", product.location || "");
-      formData.append("quantity", String(product.quantity)); // 👈 ส่ง quantity ไปด้วย
+      formData.append("quantity", String(product.quantity));
 
       formData.append("contact[phone]", product.contact?.phone || "");
       formData.append("contact[instagram]", product.contact?.instagram || "");
@@ -87,24 +89,22 @@ const CreateProduct = () => {
       formData.append("contact[others]", product.contact?.others || "");
 
       if (files.length > 0) {
-        files.forEach((file) => {
-          formData.append("images", file);
-        });
+        files.forEach((file) => formData.append("images", file));
       }
 
-      const res = await axios.post("http://localhost:4000/api/products", formData, {
+      await axios.post("http://localhost:4000/api/products", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`
         }
       });
 
-      console.log("Created product:", res.data);
+      toast.success("✅ Item created successfully!");
 
-      setProduct(initialProduct);
-      navigate("/myList");
+      setTimeout(() => navigate("/myList"), 1500);
     } catch (error: any) {
-      console.error("Create product error:", error.response?.data || error.message);
+      toast.error("❌ Failed to create item. Please try again.");
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -284,6 +284,8 @@ const CreateProduct = () => {
           </button>
         </div>
       </form>
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };
