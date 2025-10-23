@@ -11,7 +11,7 @@ const Navbar = () => {
   return (
     <div className="flex justify-between py-5 font-medium">
       {/* logo */}
-      <div>LOGO HERE</div>
+      <img className="h-10 w-auto object-contain" src="images/ku_logo.png" alt="" />
 
       {/* middle section*/}
       <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
