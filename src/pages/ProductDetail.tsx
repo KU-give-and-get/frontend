@@ -11,6 +11,36 @@ const ProductDetail = () => {
   const [status, setStatus] = useState<string>('')
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const navigate = useNavigate()
+  const [user, setUser] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Unauthorized');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await axios.get('http://localhost:4000/api/auth/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(res.data.user);
+      } catch (err: any) {
+        console.error(err);
+        setError(err.response?.data?.message || 'Failed to fetch user');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+
 
   
   const getProductsByID = async () => {
@@ -115,7 +145,9 @@ const ProductDetail = () => {
 
   const disabled = status !== 'available';
   
-
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  if (error) return <p className="text-red-500 text-center mt-10">{error}</p>;
+  if (!user) return null;
   return productData ? (
   <div className="border-t-2 pt-10">
     {/* product section */}
@@ -169,7 +201,7 @@ const ProductDetail = () => {
 
         <div className="flex flex-wrap gap-4 items-center mt-4">
         {/* เลือกจำนวนที่ต้องการรับ */}
-        <div className="flex items-center gap-2">
+        {productData.donorId !== user._id &&  <div className="flex items-center gap-2">
           <label htmlFor="selectedQuantity" className="font-medium text-gray-800">
             ต้องการรับ:
           </label>
@@ -182,10 +214,11 @@ const ProductDetail = () => {
             onChange={(e) => setSelectedQuantity(Number(e.target.value))}
             className="w-20 border rounded px-2 py-1 text-center focus:outline-none focus:ring-2 focus:ring-gray-400"
           />
-        </div>
+        </div>}
+       
 
         {/* ปุ่มรับสินค้า */}
-        <button
+        {productData.donorId !== user._id && <button
           onClick={() => handleReserve(selectedQuantity)}
           disabled={disabled}
           className={`px-6 py-2 rounded-lg text-sm font-medium transition
@@ -196,7 +229,8 @@ const ProductDetail = () => {
             }`}
         >
           {status === "available" ? `รับ ${selectedQuantity} ชิ้น` : buttonText}
-        </button>
+        </button>}
+       
       </div>
 
 
@@ -207,15 +241,15 @@ const ProductDetail = () => {
         <h2 className="font-semibold text-lg">Contact</h2>
         <div className="flex gap-2">
           <img src="/images/telephone_logo.png" alt="" className="w-[20px]" />
-          <p className="text-sm text-gray-600">Tel: <span>0656546</span></p>
+          <p className="text-sm text-gray-600">Tel: <span>{productData.contact?.phone}</span></p>
         </div>
         <div className="flex gap-2">
           <img src="/images/instagram_logo.png" alt="" className="w-[20px]" />
-          <p className="text-sm text-gray-600">Instagram: <span>@tassLL</span></p>
+          <p className="text-sm text-gray-600">Instagram: <span>{productData.contact?.instagram}</span></p>
         </div>
         <div className="flex gap-2">
           <img src="/images/facebook_logo.png" alt="" className="w-[20px]" />
-          <p className="text-sm text-gray-600">Facebook: <span>helo idk</span></p>
+          <p className="text-sm text-gray-600">Facebook: <span>{productData.contact?.facebook}</span></p>
         </div>
         <div className="bg-gray-50 p-4 rounded-lg shadow-sm space-y-2">
           <p className="text-gray-700 font-semibold">Other:</p>
@@ -223,12 +257,13 @@ const ProductDetail = () => {
         </div>
 
         {/* ปุ่ม Contact Donor */}
-        <button
+        {productData.donorId !== user._id && <button
           onClick={() => handleContactDonor(productData?.donorId!)}
           className="block mx-auto px-6 py-2.5 text-sm sm:text-base font-medium rounded-lg transition bg-black text-white hover:bg-gray-800 active:bg-gray-700"
         >
           Contact Donor
-        </button>
+        </button>}
+        
       </div>
 
 
