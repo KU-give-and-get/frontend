@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import type { Product } from "../type/Product"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProductDetail = () => {
   const {productId} = useParams()
@@ -82,12 +84,12 @@ const ProductDetail = () => {
     );
 
     if (res.data) {
-      alert("Reservation created successfully!");
+      toast.success("Product reserved successfully ✅");
       setStatus("reserved"); // อัปเดต status ใน frontend
     }
   } catch (error: any) {
+    toast.error("Failed to reserve product ❌");
     console.error("Reserve product error:", error.response?.data || error.message);
-    alert("Failed to reserve product. Please try again.");
   }
 };
 
@@ -270,6 +272,7 @@ const ProductDetail = () => {
       </div>
     </div>
     
+    <ToastContainer position="top-right" autoClose={2000} />
   </div>
 ) : <div className="opacity-0"></div>
 }

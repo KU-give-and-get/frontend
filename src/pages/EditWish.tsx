@@ -149,6 +149,7 @@ const EditWish = () => {
             rows={4}
             value={wish.description}
             onChange={handleChange}
+            required
           />
         </div>
 

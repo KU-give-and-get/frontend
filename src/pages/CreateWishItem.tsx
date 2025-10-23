@@ -135,6 +135,7 @@ const CreateWishItem = () => {
             rows={4}
             value={wishItem.description}
             onChange={handleChange}
+            required={true}
           />
         </div>
 
