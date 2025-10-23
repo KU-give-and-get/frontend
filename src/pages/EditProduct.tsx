@@ -43,25 +43,29 @@ const EditProduct = () => {
     fetchProduct();
   }, [productId]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleChange = (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
+      const { name, value } = e.target;
 
-    if (name.startsWith("contact.")) {
-      const field = name.split(".")[1];
-      setProduct((prev) => ({
-        ...prev,
-        contact: {
-          ...prev.contact,
-          [field]: value
-        }
-      }));
-    } else {
-      setProduct((prev) => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-  };
+      if (name.startsWith("contact.")) {
+        const field = name.split(".")[1];
+        setProduct((prev) => ({
+          ...prev,
+          contact: {
+            ...prev.contact,
+            [field]: value
+          }
+        }));
+      } else {
+        setProduct((prev) => ({
+          ...prev,
+          [name]: name === "quantity" ? Number(value) : value // 👈 แปลงเป็น number ถ้าเป็น quantity
+        }));
+      }
+    };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -90,6 +94,7 @@ const EditProduct = () => {
       formData.append("category", product.category || "");
       formData.append("status", product.status);
       formData.append("location", product.location || "");
+      formData.append("quantity", String(product.quantity));
 
       formData.append("contact[phone]", product.contact?.phone || "");
       formData.append("contact[instagram]", product.contact?.instagram || "");
@@ -161,6 +166,21 @@ const EditProduct = () => {
             onChange={handleChange}
           />
         </div>
+
+        {/* Quantity */}
+        <div>
+          <label className="block font-medium mb-1">Quantity</label>
+          <input
+            type="number"
+            name="quantity"
+            className="w-full border border-gray-300 p-2 rounded-md"
+            value={product.quantity}
+            onChange={handleChange}
+            min={1}
+            required
+          />
+        </div>
+
 
         {/* Location */}
         <div>
