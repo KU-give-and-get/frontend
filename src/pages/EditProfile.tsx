@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import type {User} from '../type/User'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 const EditProfile = () => {
@@ -87,8 +89,11 @@ const EditProfile = () => {
         },
       });
 
-      navigate("/profile"); // กลับไปหน้าโปรไฟล์
+      toast.success("✅ Profile updated successfully!");
+      setTimeout(() =>
+      navigate("/profile"),1500) // กลับไปหน้าโปรไฟล์
     } catch (err: any) {
+      toast.error("❌ Failed to edit Profile. Please try again.");
       console.error(err);
       setError(err.response?.data?.message || "Failed to update profile");
     }
@@ -178,6 +183,8 @@ const EditProfile = () => {
           บันทึกการแก้ไข
         </button>
       </form>
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };
