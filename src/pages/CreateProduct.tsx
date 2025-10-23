@@ -136,6 +136,7 @@ const CreateProduct = () => {
             rows={4}
             value={product.description}
             onChange={handleChange}
+            required={true}
           />
         </div>
 
