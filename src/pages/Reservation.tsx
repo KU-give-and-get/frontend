@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import ReservationItem from "../components/ReservationItem";
 import type { Reservation } from "../type/Reservation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 const ReservationPage = () => {
@@ -10,7 +12,6 @@ const ReservationPage = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
     const fetchReservations = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -31,6 +32,8 @@ const ReservationPage = () => {
         setLoading(false);
       }
     };
+
+  useEffect(() => {
     fetchReservations();
   }, [productId]);
 
@@ -48,15 +51,18 @@ const ReservationPage = () => {
         }
       );
 
+      if (res.data.message?.includes("Not enough stock")) {
+        toast.error("❌ Cannot approve reservation. Not enough stock available.");
+        return;
+      }
+
+      // ถ้า approved + มี quantity → สร้าง received item
       if (newStatus === "approved" && quantity) {
         await handleCreateReceivedItem(reservationId, quantity);
       }
 
-      setReservations((prev) =>
-        prev.map((r) =>
-          r._id === reservationId ? { ...r, status: res.data.status } : r
-        )
-      );
+      // รีเฟรชรายการ
+      fetchReservations();
     } catch (err: any) {
       console.error("Update reservation error:", err.response?.data || err.message);
     }
@@ -68,7 +74,7 @@ const ReservationPage = () => {
       const res = await axios.post(
         "http://localhost:4000/api/received",
         {
-          reservationId,
+          reservationId, // ส่ง requesterId ไปที่ backend
           quantity,
         },
         {
@@ -103,6 +109,8 @@ const ReservationPage = () => {
           ))}
         </div>
       )}
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
