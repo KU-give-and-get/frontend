@@ -23,7 +23,7 @@ const ReservationItem: React.FC<Props> = ({ reservation, onUpdateStatus }) => {
         onClick={handleGoToReceiver}
       >
         <img
-          src={reservation.requesterId?.profileImageUrl || "/images/avatar-placeholder.png"}
+          src={reservation.requesterId?.profileImageUrl || "/images/default_profile_picture.png"}
           alt={reservation.requesterId?.name || "Avatar"}
           className="w-12 h-12 rounded-full object-cover"
         />
