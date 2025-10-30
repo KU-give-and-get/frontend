@@ -25,7 +25,7 @@ const Login = () => {
     try {
       const urls:Record<string, string> = {
         'Login': 'http://localhost:4000/api/auth/login',
-        'Sign up': 'http://localhost:4000/api/auth/register',
+        'Sign up': 'http://localhost:4000/api/auth/signup',
         'Forgot Password': 'http://localhost:4000/api/auth/send-reset-password-link'
       }
       const url = urls[currentState]

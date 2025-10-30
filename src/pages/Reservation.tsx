@@ -10,8 +10,7 @@ const ReservationPage = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchReservations = async () => {
+      const fetchReservations = async () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
@@ -31,36 +30,37 @@ const ReservationPage = () => {
         setLoading(false);
       }
     };
+
+  useEffect(() => {
     fetchReservations();
   }, [productId]);
 
-  const handleUpdateStatus = async (reservationId: string, newStatus: string, quantity?: number) => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.put(
-        `http://localhost:4000/api/reservations/${reservationId}/status`,
-        { status: newStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (newStatus === "approved" && quantity) {
-        await handleCreateReceivedItem(reservationId, quantity);
+const handleUpdateStatus = async (reservationId: string, newStatus: string, quantity?: number) => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.put(
+      `http://localhost:4000/api/reservations/${reservationId}/status`,
+      { status: newStatus },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       }
+    );
 
-      setReservations((prev) =>
-        prev.map((r) =>
-          r._id === reservationId ? { ...r, status: res.data.status } : r
-        )
-      );
-    } catch (err: any) {
-      console.error("Update reservation error:", err.response?.data || err.message);
+    // ✅ ถ้า backend บอก reject เพราะของหมด → แจ้งเตือน
+    if (res.data.message?.includes("Not enough stock")) {
+      alert("ของไม่เพียงพอ คำขออื่นถูกยกเลิกอัตโนมัติแล้ว");
     }
-  };
+
+    // ✅ อัปเดตรายการจองใหม่ทั้งหมด
+    fetchReservations(); // <-- ต้องเรียก refresh list
+  } catch (err: any) {
+    console.error("Update reservation error:", err.response?.data || err.message);
+  }
+};
+
 
   const handleCreateReceivedItem = async (reservationId: string, quantity: number) => {
     try {
