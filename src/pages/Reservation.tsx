@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import ReservationItem from "../components/ReservationItem";
 import type { Reservation } from "../type/Reservation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 const ReservationPage = () => {
@@ -10,7 +12,7 @@ const ReservationPage = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
 
-      const fetchReservations = async () => {
+    const fetchReservations = async () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
@@ -35,32 +37,36 @@ const ReservationPage = () => {
     fetchReservations();
   }, [productId]);
 
-const handleUpdateStatus = async (reservationId: string, newStatus: string, quantity?: number) => {
-  try {
-    const token = localStorage.getItem("token");
-    const res = await axios.put(
-      `http://localhost:4000/api/reservations/${reservationId}/status`,
-      { status: newStatus },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+  const handleUpdateStatus = async (reservationId: string, newStatus: string, quantity?: number) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.put(
+        `http://localhost:4000/api/reservations/${reservationId}/status`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (res.data.message?.includes("Not enough stock")) {
+        toast.error("❌ Cannot approve reservation. Not enough stock available.");
+        return;
       }
-    );
 
-    // ✅ ถ้า backend บอก reject เพราะของหมด → แจ้งเตือน
-    if (res.data.message?.includes("Not enough stock")) {
-      alert("ของไม่เพียงพอ คำขออื่นถูกยกเลิกอัตโนมัติแล้ว");
+      // ถ้า approved + มี quantity → สร้าง received item
+      if (newStatus === "approved" && quantity) {
+        await handleCreateReceivedItem(reservationId, quantity);
+      }
+
+      // รีเฟรชรายการ
+      fetchReservations();
+    } catch (err: any) {
+      console.error("Update reservation error:", err.response?.data || err.message);
     }
-
-    // ✅ อัปเดตรายการจองใหม่ทั้งหมด
-    fetchReservations(); // <-- ต้องเรียก refresh list
-  } catch (err: any) {
-    console.error("Update reservation error:", err.response?.data || err.message);
-  }
-};
-
+  };
 
   const handleCreateReceivedItem = async (reservationId: string, quantity: number) => {
     try {
@@ -68,7 +74,7 @@ const handleUpdateStatus = async (reservationId: string, newStatus: string, quan
       const res = await axios.post(
         "http://localhost:4000/api/received",
         {
-          reservationId,
+          reservationId, // ส่ง requesterId ไปที่ backend
           quantity,
         },
         {
@@ -103,6 +109,8 @@ const handleUpdateStatus = async (reservationId: string, newStatus: string, quan
           ))}
         </div>
       )}
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
